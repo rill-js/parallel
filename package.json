@@ -1,6 +1,6 @@
 {
   "name": "@rill/parallel",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Run Rill middleware in parallel.",
   "author": "Dylan Piercey <pierceydylan@gmail.com>",
   "main": "index.js",

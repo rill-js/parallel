@@ -10,13 +10,11 @@ npm install @rill/parallel
 
 ## Example
 
-Rewrite using a regular expression.
-
 ```js
 // Run both timeouts in parallel.
 app.use(parallel([
 	(ctx, next)=> next().then(sleep(1000)),
-	(ctx, next)=> sleep(1000).then(next),
+	(ctx, next)=> sleep(1000).then(next)
 ]))
 
 function sleep (ms) {
