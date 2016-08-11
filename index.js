@@ -1,35 +1,59 @@
-var deferred = Promise.resolve();
-
 /**
- * Rwrite `from` to `to`.
+ * @api public
+ * @description
+ * Run all provided Rill middleware functions in parallel.
  *
  * @param {String|RegExp} from
  * @param {String} to
  * @return {Function}
- * @api public
  */
 module.exports = function (fns) {
-	if (!Array.isArray(fns)) throw new TypeError("@rill/parallel: Middleware must be an array.");
-	if (!fns.every(isFn)) throw new TypeError("@rill/parallel: Middleware must be functions.");
-	var len = fns.length;
+  if (!Array.isArray(fns)) {
+    throw new TypeError('@rill/parallel: Middleware must be an array.')
+  }
 
-	return function parallel (ctx, next) {
-		var promises = new Array(len);
-		for (var i = 0; i < len; i++) promises[i] = fns[i](ctx, noop);
+  if (!fns.every(isFn)) {
+    throw new TypeError('@rill/parallel: Middleware must be functions.')
+  }
 
-		return Promise.all(promises).then(next);
-	}
-};
+  return function parallel (ctx, next) {
+    var len = fns.length
+    var promises = new Array(len)
+    next = once(next)
+
+    for (var i = 0; i < len; i++) {
+      promises[i] = fns[i](ctx, next)
+    }
+
+    return Promise.all(promises)
+  }
+}
 
 /**
+ * @api private
+ * @description
  * Test if a value is a function.
  *
  * @param {*} fn
- * @api private
  */
-function isFn (fn) { return typeof fn === "function"; }
+function isFn (fn) {
+  return typeof fn === 'function'
+}
 
 /**
- * Empty promise noop.
+ * @api private
+ * @description
+ * Call a function once.
+ *
+ * @param {Function} fn
  */
-function noop () { return deferred };
+function once (fn) {
+  var called = false
+  var value = undefined
+  return function self () {
+    if (called) return value
+    called = true
+    value = fn()
+    return value
+  }
+}
