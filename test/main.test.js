@@ -1,3 +1,5 @@
+'use strict'
+
 var assert = require('assert')
 var agent = require('supertest')
 var Rill = require('rill')
@@ -6,11 +8,10 @@ var parallel = require('../')
 describe('Rill/Parallel', function () {
   it('should run in parallel', function (done) {
     var started = null
-    var diff = null
     var request = agent(
       Rill()
         .use(function (ctx, next) {
-          started = new Date
+          started = new Date()
           return next()
         })
         .use(parallel([
@@ -52,21 +53,13 @@ describe('Rill/Parallel', function () {
       })
       .end(done)
 
-
     // Check if a certain duration has elapsed with 25ms tolerance.
-    function hasElapsed(ms) {
+    function hasElapsed (ms) {
       var diff = +new Date() - started
       return diff >= ms && diff < ms + 25
     }
   })
 })
-
-function respond (status, test) {
-  return function (ctx) {
-    ctx.res.status = status
-    if (typeof test === 'function') test(ctx)
-  }
-}
 
 function sleep (ms) {
   return new Promise(function (resolve) {

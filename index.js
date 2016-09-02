@@ -1,3 +1,5 @@
+'use strict'
+
 /**
  * @api public
  * @description
@@ -48,8 +50,8 @@ function isFn (fn) {
  * @param {Function} fn
  */
 function once (fn) {
-  var called = false
-  var value = undefined
+  var value
+  var called
   return function self () {
     if (called) return value
     called = true
